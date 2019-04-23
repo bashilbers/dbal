@@ -801,7 +801,15 @@ abstract class AbstractSchemaManager
             }
 
             if (! $defaultPrevented) {
-                $column = $this->_getPortableTableColumnDefinition($tableColumn);
+                try {
+                    $column = $this->_getPortableTableColumnDefinition($tableColumn);
+                } catch (\Doctrine\DBAL\DBALException $e) {
+                    throw new \Doctrine\DBAL\DBALException(sprintf(
+                        '%s at %s',
+                        $e->getMessage(),
+                        $database . '.' . $table . '.' . $tableColumn
+                    ));
+                }
             }
 
             if (! $column) {
